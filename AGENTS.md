@@ -28,6 +28,10 @@ Tests run on Testbench 11 / Laravel 13; sandbox is Laravel 12. Both are supporte
 - Let failures surface. No try/catch for tidiness. Silent non-labelling is this addon's worst failure mode — fail loud.
 - Never use the word "compliant"/"compliance" in README, UI strings, or marketplace copy.
 
+## Testing Pitfalls
+
+- `AddonTestCase` does not load Statamic CP routes; CP-save tests must register core controller route explicitly.
+
 ## Off-Limits Files
 
 - `vendor/` — managed by Composer.
