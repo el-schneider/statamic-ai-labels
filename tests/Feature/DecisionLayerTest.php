@@ -78,7 +78,7 @@ test('saving an asset in the CP persists the chosen label', function () {
         app(AssetsController::class)->update($request, $encoded_asset);
 
         return response('');
-    });
+    })->name('statamic.cp.assets.update');
 
     $asset = AssetContainer::make('assets')->disk('public')->makeAsset('photo.jpg');
     Asset::shouldReceive('find')->once()->with($asset->id())->andReturn($asset);
