@@ -13,6 +13,11 @@ class LabelledImageGenerator extends ImageGenerator
 
     public static function watermarkParams($asset, array $params): array
     {
+        // Remote URLs and bare paths have no asset to classify — never badge them.
+        if ($asset === null) {
+            return [];
+        }
+
         // L3 owns this marker; its burned original must not receive a second badge.
         if (array_key_exists('mark', $params) || $asset->get('ai_label_badged')) {
             return [];

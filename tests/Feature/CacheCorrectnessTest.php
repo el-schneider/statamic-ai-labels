@@ -72,3 +72,11 @@ test('saving an asset without touching the label does not flush the static cache
 
     AssetSaved::dispatch($asset);
 });
+
+test('remote urls and bare paths build glide urls without badge params', function () {
+    $remote = app(ImageManipulator::class)->item('https://example.com/photo.jpg')->width(400)->build();
+    $path = app(ImageManipulator::class)->item('/img/local-file.jpg')->width(400)->build();
+
+    expect($remote)->not->toContain('mark=')
+        ->and($path)->not->toContain('mark=');
+});
