@@ -3,9 +3,14 @@
 use ElSchneider\StatamicAiLabels\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Statamic\Events\AssetContainerBlueprintFound;
+use Statamic\Facades\Asset;
+use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Blueprint;
+use Statamic\Facades\User;
+use Statamic\Http\Controllers\CP\Assets\AssetsController;
 
 function assetBlueprint(): Statamic\Fields\Blueprint
 {
@@ -66,6 +71,28 @@ test('injection listener is idempotent across repeated blueprint calls', functio
 
     expect($blueprint->fields()->all())->toHaveCount(2)
         ->and($blueprint->hasField('ai_label'))->toBeTrue();
+});
+
+test('saving an asset in the CP persists the chosen label', function () {
+    app('router')->put('cp/assets/{encoded_asset}', function (Request $request, string $encoded_asset) {
+        app(AssetsController::class)->update($request, $encoded_asset);
+
+        return response('');
+    });
+
+    $asset = AssetContainer::make('assets')->disk('public')->makeAsset('photo.jpg');
+    Asset::shouldReceive('find')->once()->with($asset->id())->andReturn($asset);
+    Asset::shouldReceive('make')->andReturnUsing(fn () => new Statamic\Assets\Asset);
+    Asset::shouldReceive('save')->once();
+    Asset::shouldReceive('all')->andReturn(collect());
+    Gate::before(fn () => true);
+
+    $this->actingAs(User::make()->id('tester')->email('tester@example.test')->makeSuper())
+        ->withoutMiddleware()
+        ->putJson('/cp/assets/'.base64_encode($asset->id()), ['ai_label' => 'generated'])
+        ->assertOk();
+
+    expect($asset->get('ai_label'))->toBe('generated');
 });
 
 test('unknown stored label values are treated as unlabelled', function () {

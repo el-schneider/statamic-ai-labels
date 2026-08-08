@@ -1,0 +1,120 @@
+<?php
+
+use ElSchneider\StatamicAiLabels\LabelledImageGenerator;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
+use Statamic\Assets\Asset;
+use Statamic\Facades\AssetContainer;
+use Statamic\Http\Controllers\CP\Assets\ThumbnailController;
+use Statamic\Imaging\ImageGenerator;
+
+function labelledAsset(string $label = 'generated', int $width = 400, int $height = 300): Asset
+{
+    File::ensureDirectoryExists(public_path('vendor/statamic-ai-labels/badges'));
+    File::copyDirectory(__DIR__.'/../../resources/badges', public_path('vendor/statamic-ai-labels/badges'));
+    File::ensureDirectoryExists(public_path('ai-label-tests'));
+
+    $image = imagecreatetruecolor($width, $height);
+    imagefill($image, 0, 0, imagecolorallocate($image, 220, 20, 60));
+    imagepng($image, public_path('ai-label-tests/source.png'));
+    imagedestroy($image);
+
+    config()->set('filesystems.disks.ai-label-tests', ['driver' => 'local', 'root' => public_path()]);
+
+    return AssetContainer::make('assets')->disk('ai-label-tests')->makeAsset('ai-label-tests/source.png')->hydrate()->set('ai_label', $label);
+}
+
+function generatedImage(Asset $asset, array $params = []): GdImage
+{
+    $path = app(ImageGenerator::class)->generateByAsset($asset, $params);
+
+    return imagecreatefrompng(storage_path('statamic/glide/'.$path));
+}
+
+test('a glide derivative of a flagged asset contains the badge', function () {
+    $image = generatedImage(labelledAsset(), ['w' => 400]);
+
+    expect(imagecolorat($image, 390, 290))->not->toBe(imagecolorallocate($image, 220, 20, 60));
+});
+
+test('a glide derivative of an unflagged asset is untouched', function () {
+    $image = generatedImage(labelledAsset('unexpected'), ['w' => 400]);
+    $color = imagecolorsforindex($image, imagecolorat($image, 390, 290));
+
+    expect($color)->toMatchArray(['red' => 220, 'green' => 20, 'blue' => 60]);
+});
+
+test('an explicit mark param in the request wins over the injected badge', function () {
+    $image = generatedImage(labelledAsset(), ['w' => 400, 'mark' => 'vendor/statamic-ai-labels/badges/ai.png']);
+
+    expect(imagecolorsforindex($image, imagecolorat($image, 390, 290))['red'])->toBeLessThan(100);
+});
+
+test('mark set to empty string suppresses the badge', function () {
+    $image = generatedImage(labelledAsset(), ['w' => 400, 'mark' => '']);
+    $color = imagecolorsforindex($image, imagecolorat($image, 390, 290));
+
+    expect($color)->toMatchArray(['red' => 220, 'green' => 20, 'blue' => 60]);
+});
+
+test('an original already carrying a burned badge is not badged again', function () {
+    $image = generatedImage(labelledAsset()->set('ai_label_badged', true), ['w' => 400]);
+    $color = imagecolorsforindex($image, imagecolorat($image, 390, 290));
+
+    expect($color)->toMatchArray(['red' => 220, 'green' => 20, 'blue' => 60]);
+});
+
+test('a missing badge warns before glide delegates without a watermark', function () {
+    config()->set('ai_labels.badges.generated', 'missing-badge.png');
+    Log::spy();
+
+    $image = generatedImage(labelledAsset(), ['w' => 400]);
+    $color = imagecolorsforindex($image, imagecolorat($image, 390, 290));
+
+    expect($color)->toMatchArray(['red' => 220, 'green' => 20, 'blue' => 60]);
+    Log::shouldHaveReceived('warning')->once()->with('AI Labels badge image is missing: missing-badge.png');
+});
+
+test('badge size respects the clamp at small, medium and large derivative widths', function () {
+    expect(LabelledImageGenerator::badgeWidth(100))->toBe(32)
+        ->and(LabelledImageGenerator::badgeWidth(800))->toBe(64)
+        ->and(LabelledImageGenerator::badgeWidth(2000))->toBe(96);
+});
+
+test('small derivatives get the minimal icon badge instead of nothing', function () {
+    $image = generatedImage(labelledAsset(), ['w' => 100]);
+
+    expect(imagecolorat($image, 90, 65))->not->toBe(imagecolorallocate($image, 220, 20, 60));
+});
+
+test('cp thumbnails of flagged assets show the badge', function () {
+    $controller = app(ThumbnailController::class);
+    $asset = labelledAsset();
+    $property = new ReflectionProperty($controller, 'asset');
+    $property->setValue($controller, $asset);
+    $method = new ReflectionMethod($controller, 'generate');
+    $image = imagecreatefrompng(storage_path('statamic/glide/'.$method->invoke($controller)));
+
+    expect(imagecolorat($image, 390, 290))->not->toBe(imagecolorallocate($image, 220, 20, 60));
+});
+
+test('a configured custom badge image is used instead of the EU pill', function () {
+    $custom = imagecreatetruecolor(40, 40);
+    imagefill($custom, 0, 0, imagecolorallocate($custom, 0, 255, 0));
+    imagepng($custom, public_path('custom-badge.png'));
+    imagedestroy($custom);
+    config()->set('ai_labels.badges.generated', 'custom-badge.png');
+
+    $image = generatedImage(labelledAsset(), ['w' => 400]);
+    $color = imagecolorsforindex($image, imagecolorat($image, 390, 290));
+
+    expect($color)->toMatchArray(['red' => 0, 'green' => 255, 'blue' => 0]);
+});
+
+test('generator subclass delegates untouched for path- and url-based generation', function () {
+    $generator = app(ImageGenerator::class);
+
+    expect($generator)->toBeInstanceOf(LabelledImageGenerator::class)
+        ->and((new ReflectionMethod($generator, 'generateByPath'))->getDeclaringClass()->getName())->toBe(ImageGenerator::class)
+        ->and((new ReflectionMethod($generator, 'generateByUrl'))->getDeclaringClass()->getName())->toBe(ImageGenerator::class);
+});

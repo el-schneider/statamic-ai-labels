@@ -5,6 +5,7 @@ namespace ElSchneider\StatamicAiLabels;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Statamic\Events\AssetContainerBlueprintFound;
+use Statamic\Imaging\ImageGenerator;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
@@ -16,6 +17,8 @@ class ServiceProvider extends AddonServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../config/ai_labels.php', 'ai_labels');
+
+        app()->extend(ImageGenerator::class, fn (ImageGenerator $generator) => new LabelledImageGenerator($generator->getServer()));
     }
 
     public function boot(): void
