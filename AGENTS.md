@@ -36,6 +36,10 @@ Tests run on Testbench 11 / Laravel 13; sandbox is Laravel 12. Both are supporte
 
 - `vendor/` — managed by Composer.
 
+## Pitfalls
+
+- `docs/` is ignored; append decision-log entries with `>>`, never overwrite with a file-write tool.
+
 ## Local Setup
 
 See `AGENTS.local.md` (untracked) for sandboxes, design docs, and machine-specific notes.

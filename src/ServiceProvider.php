@@ -4,7 +4,11 @@ namespace ElSchneider\StatamicAiLabels;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use Statamic\Contracts\Imaging\ImageManipulator;
 use Statamic\Events\AssetContainerBlueprintFound;
+use Statamic\Events\AssetSaved;
+use Statamic\Facades\Glide;
+use Statamic\Facades\StaticCache;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Providers\AddonServiceProvider;
 
@@ -19,6 +23,7 @@ class ServiceProvider extends AddonServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/ai_labels.php', 'ai_labels');
 
         app()->extend(ImageGenerator::class, fn (ImageGenerator $generator) => new LabelledImageGenerator($generator->getServer()));
+        app()->extend(ImageManipulator::class, fn (ImageManipulator $manipulator) => new LabelledImageManipulator($manipulator));
     }
 
     public function boot(): void
@@ -28,6 +33,15 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../config/ai_labels.php' => config_path('ai_labels.php'),
         ], 'ai-labels-config');
+
+        Event::listen(AssetSaved::class, function (AssetSaved $event) {
+            $handle = config('ai_labels.field_handle');
+
+            if ($event->asset->getOriginal("data.{$handle}") !== $event->asset->get($handle)) {
+                Glide::clearAsset($event->asset);
+                StaticCache::flush();
+            }
+        });
 
         Event::listen(AssetContainerBlueprintFound::class, function (AssetContainerBlueprintFound $event) {
             if (! request()->is(trim(config('statamic.cp.route', 'cp'), '/').'/assets*')) {
