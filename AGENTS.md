@@ -4,7 +4,7 @@
 
 **AI Labels** — Labels AI-generated/-manipulated media in Statamic per EU AI Act Art. 50(4) and the EU Code of Practice on marking and labelling of AI-generated content. Editorial per-asset classification, layered rendering surfaces (burned-in Glide watermark, markup partials, metadata write-back). Never claims compliance.
 
-Package: `el-schneider/statamic-ai-labels` · Statamic v6 · PHP 8.2+
+Package: `el-schneider/statamic-ai-labels` · Statamic v6 · PHP 8.2+ (runtime) / 8.4+ (dev tooling)
 
 > ⚠️ **Pre-v1, active development.** Breaking changes acceptable and expected. Remove this notice at v1.
 
@@ -15,6 +15,8 @@ Package: `el-schneider/statamic-ai-labels` · Statamic v6 · PHP 8.2+
 ./vendor/bin/pest --filter=SomeTest
 ./vendor/bin/pint --test             # style check
 ```
+
+Tests run on Testbench 11 / Laravel 13; sandbox is Laravel 12. Both are supported by `statamic/cms ^6`.
 
 ## Contributing
 

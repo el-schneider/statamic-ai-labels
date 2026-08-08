@@ -14,11 +14,15 @@
         "statamic/cms": "^6.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^10.8"
+        "orchestra/testbench": "^11.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-laravel": "*",
+        "laravel/pint": "*"
     },
     "config": {
         "allow-plugins": {
-            "pixelfear/composer-dist-plugin": true
+            "pixelfear/composer-dist-plugin": true,
+            "pestphp/pest-plugin": true
         }
     },
     "extra": {
