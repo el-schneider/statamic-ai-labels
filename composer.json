@@ -1,0 +1,37 @@
+{
+    "name": "el-schneider/statamic-ai-labels",
+    "autoload": {
+        "psr-4": {
+            "ElSchneider\\StatamicAiLabels\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ElSchneider\\StatamicAiLabels\\Tests\\": "tests"
+        }
+    },
+    "require": {
+        "statamic/cms": "^6.0"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.8"
+    },
+    "config": {
+        "allow-plugins": {
+            "pixelfear/composer-dist-plugin": true
+        }
+    },
+    "extra": {
+        "statamic": {
+            "name": "Statamic Ai Labels",
+            "description": "Statamic Ai Labels addon"
+        },
+        "laravel": {
+            "providers": [
+                "ElSchneider\\StatamicAiLabels\\ServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
