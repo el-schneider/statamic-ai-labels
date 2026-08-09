@@ -3,6 +3,7 @@
 use ElSchneider\StatamicAiLabels\ServiceProvider;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -114,10 +115,10 @@ test('boot warns loudly when a configured badge image is missing', function () {
 
 test('shipped badges heal themselves when missing from public', function () {
     $badge = public_path('vendor/statamic-ai-labels/badges/generated.png');
-    \Illuminate\Support\Facades\File::delete($badge);
+    File::delete($badge);
     expect(file_exists($badge))->toBeFalse();
 
-    app()->getProvider(\ElSchneider\StatamicAiLabels\ServiceProvider::class)->publishShippedBadges();
+    app()->getProvider(ServiceProvider::class)->publishShippedBadges();
 
     expect(file_exists($badge))->toBeTrue();
 });
