@@ -8,6 +8,8 @@ AI Labels is a Statamic labelling toolkit for editorially classified AI-generate
 composer require el-schneider/statamic-ai-labels
 ```
 
+That's the whole install: badge images self-publish on first boot, the `AI label` field appears on every asset, and Glide-rendered images of labelled assets carry the badge. Requires Statamic 6; runtime PHP `^8.2` (test suite runs on 8.4/8.5).
+
 ## How it works
 
 L0 adds an editorial `ai_label` choice (`AI`, `AI generated`, or `AI modified`) to CP asset forms; no value means unlabelled. L1 burns the matching badge into Glide-rendered image derivatives, including CP thumbnails, and changes derivative URLs when the label changes. L1.5 adds label markup to flagged Bard images because this addon owns that rendered markup. L2 is the `{{ ai_label }}` tag for template-controlled media, where an accessible responsive overlay is preferable; pass `mark=""` to Glide inside its slot so only L2 appears.

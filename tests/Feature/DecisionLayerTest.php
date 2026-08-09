@@ -111,3 +111,13 @@ test('boot warns loudly when a configured badge image is missing', function () {
 
     Log::shouldHaveReceived('warning')->once()->with('AI Labels badge image is missing: missing-badge.png');
 });
+
+test('shipped badges heal themselves when missing from public', function () {
+    $badge = public_path('vendor/statamic-ai-labels/badges/generated.png');
+    \Illuminate\Support\Facades\File::delete($badge);
+    expect(file_exists($badge))->toBeFalse();
+
+    app()->getProvider(\ElSchneider\StatamicAiLabels\ServiceProvider::class)->publishShippedBadges();
+
+    expect(file_exists($badge))->toBeTrue();
+});

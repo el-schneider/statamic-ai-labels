@@ -3,6 +3,7 @@
 namespace ElSchneider\StatamicAiLabels;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Statamic\Contracts\Imaging\ImageManipulator;
 use Statamic\Events\AssetContainerBlueprintFound;
@@ -77,7 +78,28 @@ class ServiceProvider extends AddonServiceProvider
             $event->blueprint->setContents($contents);
         });
 
+        $this->publishShippedBadges();
         $this->checkBadgeHealth();
+    }
+
+    // A plain `composer require` never runs statamic:install, so the publishables
+    // above stay unpublished and glide would silently render without badges — the
+    // addon's worst failure mode. Self-heal: copy any missing shipped badge into
+    // public on boot. Custom badge paths are untouched; checkBadgeHealth() still
+    // warns loudly for those.
+    public function publishShippedBadges(): void
+    {
+        $source = __DIR__.'/../resources/badges';
+        $target = public_path('vendor/statamic-ai-labels/badges');
+
+        foreach (File::allFiles($source) as $file) {
+            $destination = $target.'/'.$file->getRelativePathname();
+
+            if (! file_exists($destination)) {
+                File::ensureDirectoryExists(dirname($destination));
+                File::copy($file->getPathname(), $destination);
+            }
+        }
     }
 
     public static function label(mixed $value): ?string
