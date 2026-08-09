@@ -24,7 +24,14 @@ class LabelledImageManipulator implements ImageManipulator
 
     public function build()
     {
-        $params = array_merge($this->params, LabelledImageGenerator::watermarkParams($this->asset(), $this->params));
+        $params = $this->params;
+
+        // Laravel turns mark="" into null before Glide verifies its signed URL.
+        if (($params['mark'] ?? null) === '') {
+            $params['mark'] = 'vendor/statamic-ai-labels/badges/empty.png';
+        }
+
+        $params = array_merge($params, LabelledImageGenerator::watermarkParams($this->asset(), $params));
 
         return $this->manipulator->params($params)->build();
     }

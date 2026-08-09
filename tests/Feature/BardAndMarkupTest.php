@@ -67,7 +67,7 @@ test('images rendered through the ai_label tag carry no burned-in badge', functi
 
     expect(renderAntlers('{{ ai_label :asset="asset" }}{{ glide :src="asset" mark="" }}{{ /ai_label }}', ['asset' => $asset]))
         ->toContain('class="ai-label-wrapper"')
-        ->toContain('mark=')
+        ->toContain('mark=vendor%2Fstatamic-ai-labels%2Fbadges%2Fempty.png')
         ->not->toContain('mark=vendor%2Fstatamic-ai-labels%2Fbadges%2Fgenerated.png');
 });
 
