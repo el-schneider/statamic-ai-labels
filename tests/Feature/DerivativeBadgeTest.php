@@ -1,28 +1,10 @@
 <?php
 
 use ElSchneider\StatamicAiLabels\LabelledImageGenerator;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Statamic\Assets\Asset;
-use Statamic\Facades\AssetContainer;
 use Statamic\Http\Controllers\CP\Assets\ThumbnailController;
 use Statamic\Imaging\ImageGenerator;
-
-function labelledAsset(string $label = 'generated', int $width = 400, int $height = 300): Asset
-{
-    File::ensureDirectoryExists(public_path('vendor/statamic-ai-labels/badges'));
-    File::copyDirectory(__DIR__.'/../../resources/badges', public_path('vendor/statamic-ai-labels/badges'));
-    File::ensureDirectoryExists(public_path('ai-label-tests'));
-
-    $image = imagecreatetruecolor($width, $height);
-    imagefill($image, 0, 0, imagecolorallocate($image, 220, 20, 60));
-    imagepng($image, public_path('ai-label-tests/source.png'));
-    imagedestroy($image);
-
-    config()->set('filesystems.disks.ai-label-tests', ['driver' => 'local', 'root' => public_path()]);
-
-    return AssetContainer::make('assets')->disk('ai-label-tests')->makeAsset('ai-label-tests/source.png')->hydrate()->set('ai_label', $label);
-}
 
 function generatedImage(Asset $asset, array $params = []): GdImage
 {

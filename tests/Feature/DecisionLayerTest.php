@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Queue;
 use Statamic\Events\AssetContainerBlueprintFound;
 use Statamic\Facades\Asset;
 use Statamic\Facades\AssetContainer;
@@ -74,6 +75,8 @@ test('injection listener is idempotent across repeated blueprint calls', functio
 });
 
 test('saving an asset in the CP persists the chosen label', function () {
+    Queue::fake();
+
     app('router')->put('cp/assets/{encoded_asset}', function (Request $request, string $encoded_asset) {
         app(AssetsController::class)->update($request, $encoded_asset);
 

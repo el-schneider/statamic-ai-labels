@@ -31,6 +31,8 @@ Tests run on Testbench 11 / Laravel 13; sandbox is Laravel 12. Both are supporte
 ## Testing Pitfalls
 
 - `AddonTestCase` does not load Statamic CP routes; CP-save tests must register core controller route explicitly.
+- Bard `Augmentor::replaceExtension()` is last-wins; sites replacing `image` need to compose their node with `BadgedImageNode`.
+- `AddonTestCase` defers `Statamic::booted()` callbacks; parser tests register addon tags directly to avoid booting core subscribers into facade-mocked tests.
 
 ## Off-Limits Files
 

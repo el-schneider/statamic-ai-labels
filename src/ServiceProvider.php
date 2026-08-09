@@ -9,13 +9,17 @@ use Statamic\Events\AssetContainerBlueprintFound;
 use Statamic\Events\AssetSaved;
 use Statamic\Facades\Glide;
 use Statamic\Facades\StaticCache;
+use Statamic\Fieldtypes\Bard\Augmentor;
 use Statamic\Imaging\ImageGenerator;
 use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {
+    protected $tags = [Tags\AiLabel::class];
+
     protected $publishables = [
         __DIR__.'/../resources/badges' => 'badges',
+        __DIR__.'/../resources/views' => 'ai-labels-views',
     ];
 
     public function register(): void
@@ -29,6 +33,8 @@ class ServiceProvider extends AddonServiceProvider
     public function boot(): void
     {
         parent::boot();
+
+        Augmentor::replaceExtension('image', new BadgedImageNode);
 
         $this->publishes([
             __DIR__.'/../config/ai_labels.php' => config_path('ai_labels.php'),
@@ -60,11 +66,11 @@ class ServiceProvider extends AddonServiceProvider
                 'handle' => $handle,
                 'field' => [
                     'type' => 'button_group',
-                    'display' => __('ai_labels::labels.field'),
+                    'display' => __('statamic-ai-labels::labels.field'),
                     'options' => [
-                        'ai' => __('ai_labels::labels.ai'),
-                        'generated' => __('ai_labels::labels.generated'),
-                        'modified' => __('ai_labels::labels.modified'),
+                        'ai' => __('statamic-ai-labels::labels.ai'),
+                        'generated' => __('statamic-ai-labels::labels.generated'),
+                        'modified' => __('statamic-ai-labels::labels.modified'),
                     ],
                 ],
             ];

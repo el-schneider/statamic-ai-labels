@@ -14,6 +14,10 @@ Badge watermark files must live below `public_path()` because Glide reads its de
 
 Asset labels are global per asset, not localized. Asset-less media needs manual markup in a later release.
 
+## Template badge
+
+Wrap editable media with `{{ ai_label :asset="image" }}…{{ /ai_label }}` or render `{{ ai_label:badge :asset="image" }}`. When slot uses Glide, pass `mark=""` to that Glide call so the wrapper overlay is the only badge. The tag emits `data-ai-label` to make missed suppression visible in rendered HTML.
+
 ## Badge assets
 
 TODO: replace placeholder pill PNGs with official EU icon pills. Custom badges remain supported and must be clear AI disclosures.
