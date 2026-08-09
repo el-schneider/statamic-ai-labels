@@ -42,6 +42,12 @@ class LabelledImageGenerator extends ImageGenerator
             return [];
         }
 
+        // Small boxes can't fit the wide text capsule legibly; the official round
+        // basic "AI" icon (1:1) stays recognizable down to 24px.
+        if ($small) {
+            $badge = config('ai_labels.badges.ai');
+        }
+
         $markWidth = $small ? 24 : self::badgeWidth($width);
 
         return [

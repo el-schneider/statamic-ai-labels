@@ -46,3 +46,7 @@ Tests run on Testbench 11 / Laravel 13; sandbox is Laravel 12. Both are supporte
 
 See `AGENTS.local.md` (untracked) for sandboxes, design docs, and machine-specific notes.
 - Secure Glide URLs with `mark=""` fail Laravel request signature validation because empty query strings become null; normalize it to shipped `badges/empty.png` before URL signing.
+
+## Pitfalls
+
+- **Badge file changes don't bust glide caches** — glide cache keys derive from params (path), not file content. After changing any badge PNG (shipped update or custom swap), run `php please glide:clear`. The boot self-heal re-copies stale shipped badges by md5, but cached derivatives keep the old pixels until cleared.

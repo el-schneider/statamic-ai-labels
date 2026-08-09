@@ -95,7 +95,9 @@ class ServiceProvider extends AddonServiceProvider
         foreach (File::allFiles($source) as $file) {
             $destination = $target.'/'.$file->getRelativePathname();
 
-            if (! file_exists($destination)) {
+            // Copy when missing OR stale — shipped badge updates must reach
+            // installed sites, and glide caches key on params, not file content.
+            if (! file_exists($destination) || md5_file($destination) !== md5_file($file->getPathname())) {
                 File::ensureDirectoryExists(dirname($destination));
                 File::copy($file->getPathname(), $destination);
             }
