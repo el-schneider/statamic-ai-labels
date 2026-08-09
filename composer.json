@@ -1,41 +1,55 @@
 {
-    "name": "el-schneider/statamic-ai-labels",
-    "autoload": {
-        "psr-4": {
-            "ElSchneider\\StatamicAiLabels\\": "src"
-        }
+  "name": "el-schneider/statamic-ai-labels",
+  "autoload": {
+    "psr-4": {
+      "ElSchneider\\StatamicAiLabels\\": "src"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ElSchneider\\StatamicAiLabels\\Tests\\": "tests"
+    }
+  },
+  "require": {
+    "statamic/cms": "^6.0",
+    "php": "^8.2"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^11.0",
+    "pestphp/pest": "^5.0",
+    "pestphp/pest-plugin-laravel": "*",
+    "laravel/pint": "*"
+  },
+  "config": {
+    "allow-plugins": {
+      "pixelfear/composer-dist-plugin": true,
+      "pestphp/pest-plugin": true
+    }
+  },
+  "extra": {
+    "statamic": {
+      "name": "AI Labels",
+      "description": "Editorial AI media labels for Statamic"
     },
-    "autoload-dev": {
-        "psr-4": {
-            "ElSchneider\\StatamicAiLabels\\Tests\\": "tests"
-        }
-    },
-    "require": {
-        "statamic/cms": "^6.0"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^11.0",
-        "pestphp/pest": "^5.0",
-        "pestphp/pest-plugin-laravel": "*",
-        "laravel/pint": "*"
-    },
-    "config": {
-        "allow-plugins": {
-            "pixelfear/composer-dist-plugin": true,
-            "pestphp/pest-plugin": true
-        }
-    },
-    "extra": {
-        "statamic": {
-            "name": "Statamic Ai Labels",
-            "description": "Statamic Ai Labels addon"
-        },
-        "laravel": {
-            "providers": [
-                "ElSchneider\\StatamicAiLabels\\ServiceProvider"
-            ]
-        }
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true
+    "laravel": {
+      "providers": [
+        "ElSchneider\\StatamicAiLabels\\ServiceProvider"
+      ]
+    }
+  },
+  "description": "Editorial AI media labels for Statamic",
+  "keywords": [
+    "statamic",
+    "statamic-addon",
+    "eu-ai-act",
+    "ai-labelling",
+    "transparency"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "el-schneider",
+      "homepage": "https://github.com/el-schneider"
+    }
+  ]
 }
