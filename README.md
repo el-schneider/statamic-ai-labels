@@ -1,4 +1,4 @@
-# AI Labels
+<img src="images/ail_banner.png" alt="AI Labels">
 
 AI Labels is a Statamic labelling toolkit for editorially classified AI-generated and AI-modified media. It adds an asset field and puts a visible EU AI label on Glide derivatives without template changes. It has deliberate limits: operators decide which assets need disclosure, and not every delivery path can be labelled automatically.
 
@@ -26,7 +26,7 @@ php artisan vendor:publish --tag=ai-labels-config
 
 | Key | Default | Purpose |
 | --- | --- | --- |
-| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by the burned-in badge and the `{{ ai_label }}` tag, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. Plain official alternatives are published at `vendor/statamic-ai-labels/badges/eu/{ai,generated,modified}-{black,white}.png`. |
+| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by the burned-in badge and the `{{ ai_label }}` tag, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. The full official icon set (black/white, with and without transparency) is available from the European Commission as [PNG](https://ec.europa.eu/newsroom/dae/redirection/document/129547) and [SVG](https://ec.europa.eu/newsroom/dae/redirection/document/129546). |
 | `position` | `bottom-right` | Glide watermark position. |
 | `clamp.min`, `clamp.max` | `32`, `96` | Minimum and maximum pre-DPR watermark width in pixels. |
 | `small_derivative.threshold` | `200` | Derivatives below this width use the minimum icon badge. |
