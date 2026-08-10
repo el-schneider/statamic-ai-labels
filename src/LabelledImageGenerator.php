@@ -27,15 +27,13 @@ class LabelledImageGenerator extends ImageGenerator
             return [];
         }
 
-        $badge = config("ai_labels.badges.{$label}");
+        $width = self::derivativeWidth($asset, $params);
 
-        if (! file_exists(public_path($badge))) {
-            app()->getProvider(ServiceProvider::class)->warnMissingBadgesOnce();
-
+        // Hard floor: derivatives this small are documented as unlabelled.
+        if ($width < (int) config('ai_labels.small_derivative.min_width', 0)) {
             return [];
         }
 
-        $width = self::derivativeWidth($asset, $params);
         $small = $width < config('ai_labels.small_derivative.threshold');
 
         if ($small && config('ai_labels.small_derivative.behavior') === 'skip') {
@@ -44,14 +42,18 @@ class LabelledImageGenerator extends ImageGenerator
 
         // Small boxes can't fit the wide text capsule legibly; the official round
         // basic "AI" icon (1:1) stays recognizable down to 24px.
-        if ($small) {
-            $badge = config('ai_labels.badges.ai');
+        $badge = ServiceProvider::badge($small ? 'ai' : $label);
+
+        if (! file_exists(public_path($badge['path']))) {
+            app()->getProvider(ServiceProvider::class)->warnMissingBadgesOnce();
+
+            return [];
         }
 
-        $markWidth = $small ? 24 : self::badgeWidth($width);
+        $markWidth = $small ? 24 : max(1, (int) round(self::badgeWidth($width) * $badge['scale']));
 
         return [
-            'mark' => $badge,
+            'mark' => $badge['path'],
             'markw' => $markWidth,
             'markpad' => max(4, (int) round($markWidth / 4)),
             'markpos' => config('ai_labels.position', 'bottom-right'),

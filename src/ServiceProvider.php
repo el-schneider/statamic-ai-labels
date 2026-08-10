@@ -109,9 +109,22 @@ class ServiceProvider extends AddonServiceProvider
         return in_array($value, ['ai', 'generated', 'modified'], true) ? $value : null;
     }
 
+    /** @return array{path: string, scale: float} */
+    public static function badge(string $label): array
+    {
+        $entry = config("ai_labels.badges.{$label}");
+
+        return is_array($entry)
+            ? ['path' => $entry['path'], 'scale' => (float) ($entry['scale'] ?? 1.0)]
+            : ['path' => $entry, 'scale' => 1.0];
+    }
+
     public static function missingBadges(): array
     {
-        return array_values(array_filter(config('ai_labels.badges'), fn (string $badge) => ! file_exists(public_path($badge))));
+        return array_values(array_filter(
+            array_map(fn (string $label) => self::badge($label)['path'], array_keys(config('ai_labels.badges'))),
+            fn (string $path) => ! file_exists(public_path($path)),
+        ));
     }
 
     public function checkBadgeHealth(): void

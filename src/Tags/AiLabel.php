@@ -48,7 +48,7 @@ class AiLabel extends Tags
     private function renderBadge(string $label): string
     {
         return view('statamic-ai-labels::badge', [
-            'badge' => config("ai_labels.badges.{$label}"),
+            'badge' => ServiceProvider::badge($label)['path'],
             'label' => $label,
             'text' => __('statamic-ai-labels::labels.disclosure.'.$label),
         ])->render();

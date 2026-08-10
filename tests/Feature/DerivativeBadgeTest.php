@@ -100,3 +100,20 @@ test('generator subclass delegates untouched for path- and url-based generation'
         ->and((new ReflectionMethod($generator, 'generateByPath'))->getDeclaringClass()->getName())->toBe(ImageGenerator::class)
         ->and((new ReflectionMethod($generator, 'generateByUrl'))->getDeclaringClass()->getName())->toBe(ImageGenerator::class);
 });
+
+test('a squarish badge is scaled down by its configured scale', function () {
+    config()->set('ai_labels.badges.generated', ['path' => config('ai_labels.badges.generated'), 'scale' => 0.5]);
+
+    $params = LabelledImageGenerator::watermarkParams(labelledAsset(), ['w' => 1000]);
+
+    // Unscaled clamp for w=1000 is 80; scale 0.5 halves it.
+    expect($params['markw'])->toBe(40);
+});
+
+test('derivatives below the configured min width carry no badge', function () {
+    config()->set('ai_labels.small_derivative.min_width', 150);
+
+    $params = LabelledImageGenerator::watermarkParams(labelledAsset(), ['w' => 100]);
+
+    expect($params)->toBe([]);
+});
