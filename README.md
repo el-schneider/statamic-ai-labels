@@ -1,6 +1,11 @@
 <img src="images/ail_banner.png" alt="AI Labels">
 
-AI Labels is a Statamic labelling toolkit for editorially classified AI-generated and AI-modified media. It adds an asset field and puts a visible EU AI label on Glide derivatives without template changes. It has deliberate limits: operators decide which assets need disclosure, and not every delivery path can be labelled automatically.
+> Simple labels for AI-generated content. Official EU icons on every Glide-rendered image — one field per asset, no template changes.
+
+> [!IMPORTANT]
+> **No legal advice, no compliance guarantee.** This addon renders labels. Whether and how your content must be disclosed — under the EU AI Act or any other law — is your decision and your responsibility. Defaults follow the official EU icons and placement guidance, and will evolve as practical requirements become clearer.
+
+AI Labels adds an `AI label` field to every asset and puts a visible EU AI label on Glide derivatives without template changes. It has deliberate limits: you decide which assets need disclosure, and not every delivery path can be labelled automatically — the coverage table below says exactly which.
 
 ## Install
 
