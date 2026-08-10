@@ -26,11 +26,12 @@ php artisan vendor:publish --tag=ai-labels-config
 
 | Key | Default | Purpose |
 | --- | --- | --- |
-| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU pills | Paths below `public_path()` used by L1 and L2. Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. Plain official alternatives are published at `vendor/statamic-ai-labels/badges/eu/{ai,generated,modified}-{black,white}.png`. |
+| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by L1 and L2, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. Plain official alternatives are published at `vendor/statamic-ai-labels/badges/eu/{ai,generated,modified}-{black,white}.png`. |
 | `position` | `bottom-right` | Glide watermark position. |
 | `clamp.min`, `clamp.max` | `32`, `96` | Minimum and maximum pre-DPR watermark width in pixels. |
 | `small_derivative.threshold` | `200` | Derivatives below this width use the minimum icon badge. |
 | `small_derivative.behavior` | `icon` | `icon` keeps the minimum badge at small sizes; set `skip` only when omission is intentional. |
+| `small_derivative.min_width` | `0` | Hard floor: derivatives narrower than this are never badged (`0` = always badge). Anything below the floor counts as an unlabelled delivery path — pair with L2 or adjacent disclosure. |
 | `field_handle` | `ai_label` | Asset field handle, for sites with a collision. |
 
 ## Template-controlled media (L2)
