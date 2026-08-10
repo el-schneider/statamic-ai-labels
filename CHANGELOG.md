@@ -12,4 +12,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Editorial AI label field for Statamic assets.
 - EU AI badge watermarks for Glide derivatives, cache-busting URLs, and CP thumbnails.
 - Bard and template-controlled media labels with accessible markup.
-- Capability matrix documenting covered and operator-action delivery paths.
+- Coverage table documenting covered and operator-action delivery paths.

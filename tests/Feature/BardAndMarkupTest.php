@@ -36,7 +36,7 @@ test('a bard image referencing a flagged asset renders with the badge markup', f
 test('a bard image referencing an unflagged asset renders unchanged', function () {
     $asset = labelledAsset('unexpected');
 
-    // Bard renders raw asset URLs, not Glide URLs, so L1 cannot add a second badge here.
+    // Bard renders raw asset URLs, not Glide URLs, so the burned-in badge cannot apply here.
     expect(renderBardImage('asset::'.$asset->id()))
         ->toBe('<img>');
 });

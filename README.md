@@ -12,7 +12,7 @@ That's the whole install: badge images self-publish on first boot, the `AI label
 
 ## How it works
 
-L0 adds an editorial `ai_label` choice (`AI`, `AI generated`, or `AI modified`) to CP asset forms; no value means unlabelled. L1 burns the matching badge into Glide-rendered image derivatives, including CP thumbnails, and changes derivative URLs when the label changes. L1.5 adds label markup to flagged Bard images because this addon owns that rendered markup. L2 is the `{{ ai_label }}` tag for template-controlled media, where an accessible responsive overlay is preferable; pass `mark=""` to Glide inside its slot so only L2 appears.
+An editorial `ai_label` choice (`AI`, `AI generated`, or `AI modified`) is added to CP asset forms; no value means unlabelled. The matching badge is burned into Glide-rendered image derivatives, including CP thumbnails, and derivative URLs change when the label changes. Label markup is added to flagged Bard images, since this addon owns that rendered markup. For template-controlled media where an accessible responsive overlay is preferable, use the `{{ ai_label }}` tag; pass `mark=""` to Glide inside its slot so only the tag's overlay renders (no burned-in badge underneath).
 
 Asset labels are global per asset, not localized. This package never detects or infers AI use.
 
@@ -26,15 +26,15 @@ php artisan vendor:publish --tag=ai-labels-config
 
 | Key | Default | Purpose |
 | --- | --- | --- |
-| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by L1 and L2, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. Plain official alternatives are published at `vendor/statamic-ai-labels/badges/eu/{ai,generated,modified}-{black,white}.png`. |
+| `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by the burned-in badge and the `{{ ai_label }}` tag, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. Plain official alternatives are published at `vendor/statamic-ai-labels/badges/eu/{ai,generated,modified}-{black,white}.png`. |
 | `position` | `bottom-right` | Glide watermark position. |
 | `clamp.min`, `clamp.max` | `32`, `96` | Minimum and maximum pre-DPR watermark width in pixels. |
 | `small_derivative.threshold` | `200` | Derivatives below this width use the minimum icon badge. |
 | `small_derivative.behavior` | `icon` | `icon` keeps the minimum badge at small sizes; set `skip` only when omission is intentional. |
-| `small_derivative.min_width` | `0` | Hard floor: derivatives narrower than this are never badged (`0` = always badge). Anything below the floor counts as an unlabelled delivery path — pair with L2 or adjacent disclosure. |
+| `small_derivative.min_width` | `0` | Hard floor: derivatives narrower than this are never badged (`0` = always badge). Anything below the floor counts as an unlabelled delivery path — pair with the `{{ ai_label }}` tag or adjacent disclosure. |
 | `field_handle` | `ai_label` | Asset field handle, for sites with a collision. |
 
-## Template-controlled media (L2)
+## Template-controlled media
 
 ```antlers
 {{ ai_label :asset="image" }}
@@ -44,23 +44,23 @@ php artisan vendor:publish --tag=ai-labels-config
 
 Use `{{ ai_label:badge :asset="image" }}` for an adjacent label, including audio and external video placeholders. The tag renders nothing for an unlabelled asset.
 
-## Capability matrix
+## Coverage by delivery path
 
-“Visible at first exposure” and “survives download/reshare” describe delivery paths, not a legal conclusion. L1 badges are burned into the derivative, so saving that derivative retains its badge; saving an original does not.
+“Visible at first exposure” and “survives download/reshare” describe delivery paths, not a legal conclusion. The burned-in badge is part of the derivative pixels, so saving that derivative retains its badge; saving an original does not.
 
 | Delivery mode | Visible at first exposure | Survives download/reshare |
 | --- | --- | --- |
-| Glide-rendered image | L1 ✓ | L1 ✓ as downloaded derivative |
-| Raw asset URL image (`{{ asset:url }}`) | Not covered — operator action required (L3) | Not covered — operator action required (L3) |
+| Glide-rendered image | Burned-in badge ✓ | Burned-in badge ✓ as downloaded derivative |
+| Raw asset URL image (`{{ asset:url }}`) | Not covered — operator action required (original-file badging planned) | Not covered — operator action required (original-file badging planned) |
 | CSS background image | Not covered — operator action required | Not covered — operator action required |
-| Video poster rendered through Glide with ffmpeg | L1 ✓, conditional on thumbnail extraction | L1 ✓ as downloaded derivative, conditional |
-| External video embed | L2 placeholder only | Not covered — operator action required |
-| Audio | L2 adjacent label only | Not covered — operator action required |
-| Small Glide derivative | L1 minimal icon badge ✓ | L1 ✓ as downloaded derivative |
+| Video poster rendered through Glide with ffmpeg | Burned-in badge ✓, conditional on thumbnail extraction | Burned-in badge ✓ as downloaded derivative, conditional |
+| External video embed | `{{ ai_label }}` placeholder only | Not covered — operator action required |
+| Audio | `{{ ai_label }}` adjacent label only | Not covered — operator action required |
+| Small Glide derivative | Burned-in minimal icon badge ✓ | Burned-in badge ✓ as downloaded derivative |
 | JavaScript-injected content | Not covered — operator action required | Not covered — operator action required |
-| Hotlinked original | Not covered — operator action required (L3) | Not covered — operator action required (L3) |
+| Hotlinked original | Not covered — operator action required (original-file badging planned) | Not covered — operator action required (original-file badging planned) |
 
-Use L2 where templates are editable, especially for tight crops, fixed-ratio cards, audio, and embeds. Glide applies its watermark after its own crop and resize, but CSS `object-fit` or extreme `object-position` can still crop a corner from view. Raw URLs, CSS backgrounds, external embeds, hotlinks, and JavaScript-injected media need operator action.
+Use the `{{ ai_label }}` tag where templates are editable, especially for tight crops, fixed-ratio cards, audio, and embeds. Glide applies its watermark after its own crop and resize, but CSS `object-fit` or extreme `object-position` can still crop a corner from view. Raw URLs, CSS backgrounds, external embeds, hotlinks, and JavaScript-injected media need operator action.
 
 ## Legal framing
 
@@ -70,7 +70,7 @@ This toolkit supports an editorial labelling workflow. It is not legal advice an
 
 ## Roadmap
 
-Planned work: L3 original-file badging, L4 metadata write-back, Markdown image renderer, and approval records. These are not configuration switches today.
+Planned work: original-file badging, metadata write-back, a Markdown image renderer, and approval records. These are not configuration switches today.
 
 ## Credits and licence
 

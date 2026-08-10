@@ -18,7 +18,8 @@ class LabelledImageGenerator extends ImageGenerator
             return [];
         }
 
-        // L3 owns this marker; its burned original must not receive a second badge.
+        // 'ai_label_badged' marks assets whose original file already has a burned-in
+        // badge (planned original-file badging) — never badge that file a second time.
         if (array_key_exists('mark', $params) || $asset->get('ai_label_badged')) {
             return [];
         }

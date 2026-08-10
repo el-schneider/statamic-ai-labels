@@ -17,7 +17,7 @@ return [
         'threshold' => 200,
         'behavior' => 'icon',
         // Below min_width: never badge (0 = always badge). Derivatives this small
-        // are documented as unlabelled — pair with L2/adjacent disclosure.
+        // are documented as unlabelled — pair with the ai_label tag or adjacent disclosure.
         'min_width' => 0,
     ],
     'field_handle' => 'ai_label',
