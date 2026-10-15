@@ -32,7 +32,8 @@ php artisan vendor:publish --tag=ai-labels-config
 | Key | Default | Purpose |
 | --- | --- | --- |
 | `badges.ai`, `badges.generated`, `badges.modified` | shipped EU capsules | Paths below `public_path()` used by the burned-in badge and the `{{ ai_label }}` tag, either a string or `['path' => …, 'scale' => 0.4]`. `scale` multiplies the computed width — use it for badges whose aspect ratio differs from the wide capsules (the round basic icon ships with `0.4`). Replace any path with a custom PNG, but keep custom badges a clear AI disclosure. The full official icon set (black/white, with and without transparency) is available from the European Commission as [PNG](https://ec.europa.eu/newsroom/dae/redirection/document/129547) and [SVG](https://ec.europa.eu/newsroom/dae/redirection/document/129546). |
-| `position` | `bottom-right` | Glide watermark position: `top-left`, `top`, `top-right`, `left`, `center`, `right`, `bottom-left`, `bottom`, `bottom-right`. The badge sits flush with the image edge; add transparent margin to the badge PNG for spacing. |
+| `position` | `bottom-right` | Glide watermark position: `top-left`, `top`, `top-right`, `left`, `center`, `right`, `bottom-left`, `bottom`, `bottom-right`. |
+| `padding` | `0.25` | Gap between badge and image edge, as a fraction of the badge width. `0` places the badge flush with the edge. |
 | `clamp.min`, `clamp.max` | `32`, `96` | Minimum and maximum pre-DPR watermark width in pixels. |
 | `small_derivative.threshold` | `200` | Derivatives below this width use the minimum icon badge. |
 | `small_derivative.behavior` | `icon` | `icon` keeps the minimum badge at small sizes; set `skip` only when omission is intentional. |

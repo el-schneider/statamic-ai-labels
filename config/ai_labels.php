@@ -11,6 +11,8 @@ return [
         'modified' => 'vendor/statamic-ai-labels/badges/modified.png',
     ],
     'position' => 'bottom-right',
+    // Gap between badge and image edge, as a fraction of the badge width (0 = flush).
+    'padding' => 0.25,
     'clamp' => ['min' => 32, 'max' => 96],
     'small_derivative' => [
         // Below threshold: render the round basic icon ('icon') or nothing ('skip').
