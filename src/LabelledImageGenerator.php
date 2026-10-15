@@ -53,10 +53,10 @@ class LabelledImageGenerator extends ImageGenerator
 
         $markWidth = $small ? 24 : max(1, (int) round(self::badgeWidth($width) * $badge['scale']));
 
+        // Flush with the edge: badges needing breathing room carry it as transparent pixels in the PNG.
         return [
             'mark' => $badge['path'],
             'markw' => $markWidth,
-            'markpad' => max(4, (int) round($markWidth / 4)),
             'markpos' => config('ai_labels.position', 'bottom-right'),
         ];
     }
